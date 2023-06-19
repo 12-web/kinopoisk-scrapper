@@ -40,7 +40,7 @@ export default class MoviesScrapper {
     .nextElementSibling
     .childNodes[1]
     .textContent
-    const poster = page.querySelector('.film-poster');
+    const poster = page.querySelector('.film-poster').src;
     const box = page.querySelector('a[href*=box]');
     const rating = Number(page.querySelector('[data-tid="939058a8"]').textContent);
     const rank = parseInt(page.querySelector('.styles_position__pm10U').textContent);
