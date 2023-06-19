@@ -4,36 +4,26 @@ export default class MoviesScrapper {
     this._baseUrl = 'https://us-central1-proxy-24e43.cloudfunctions.net/api?url=https://www.kinopoisk.ru';
   }
 
-  // формирование запроса
-  _createQuery(url) {
-    return fetch(`${this._baseUrl}/${url}`, {
-      headers: {
-        'Content-Type': 'text/html'
-      }
-    })
-    .then(res => {
-      if (res.ok) {
-        return res.text();
-    }
-
-      return Promise.reject(`Ошибка: ${res.status}`);
-    })
-  }
-
   // парсинг страницы
-  _parsePage(page) {
+  async _parsePage(page) {
+    const textPage = await page.text();
     const parser = new DOMParser();
-    return parser.parseFromString(page, "text/html");
+    return parser.parseFromString(textPage, "text/html");
   }
 
   // получение старницы с фильмом
-  _getFilmPage(url) {
-    this._createQuery(url)
-      .then(res => this._parsePage(res))
-      .then(page => this._createMovieElement(page))
-      .catch((err) => {
-        console.log(err);
-       })
+  async _getFilmPage(url) {
+    try {
+        const page = await fetch(`${this._baseUrl}/${url}`, {
+          headers: {
+            'Content-Type': 'text/html'
+          }
+        })
+        const textPage = await this._parsePage(page);
+        this._createMovieElement(textPage);
+      } catch(err) {
+        console.log(err)
+      }
   }
 
   // формирование объекта с фильмом
@@ -50,7 +40,7 @@ export default class MoviesScrapper {
     .nextElementSibling
     .childNodes[1]
     .textContent
-    const poster = page.querySelector('.film-poster').src;
+    const poster = page.querySelector('.film-poster');
     const box = page.querySelector('a[href*=box]');
     const rating = Number(page.querySelector('[data-tid="939058a8"]').textContent);
     const rank = parseInt(page.querySelector('.styles_position__pm10U').textContent);
@@ -105,16 +95,6 @@ export default class MoviesScrapper {
     console.log(result);
   }
 
-  // прохождение по страницам со списком фильмов
-  _searchFilmsPages(number) {
-    this._createQuery(`lists/movies/top250/?page=${number}`)
-      .then(res => this._parsePage(res))
-      .then(page => this._getFilmsPages(this._collectFilmsLink(page)))
-      .catch((err) => {
-        console.log(err);
-      });
-  }
-
   // прохождение по страницам для получения ссылок на фильмы
   async _scanFilmsLinks(iterator) {
 
@@ -124,21 +104,33 @@ export default class MoviesScrapper {
 
   }
 
+  // получение информации о списке с фильмов со страницы
+  async _getFilmsPageInformation(pageNumber) {
+    try {
+      const page = await fetch(`${this._baseUrl}/lists/movies/top250/?page=${pageNumber}`, {
+        headers: {
+          'Content-Type': 'text/html'
+        }
+      });
+      const parsPage = await this._parsePage(page);
+      return parsPage;
+    } catch(err) {
+      console.log(err);
+    }
+  }
+
   // получение страницы со списком фильмов
   async *_getFilmListPage() {
     let isExistedFilm = true;
     let pageNumber = 1
     while(isExistedFilm) {
-      const page = await fetch(`${this._baseUrl}/lists/movies/top250/?page=${pageNumber}`);
-      const textPage = await page.text();
-      const parsPage = this._parsePage(textPage);
-
+      const parsPage = await this._getFilmsPageInformation(pageNumber);
       isExistedFilm = parsPage.querySelector('a[href*="/film/"]');
       if(isExistedFilm === null) { break };
       pageNumber++;
       yield parsPage;
+      }
     }
-  }
 
   //поиск по названию фильма
   findMovie(name) {
@@ -198,6 +190,13 @@ export default class MoviesScrapper {
     });
 
     this._consoleResult(filteredFilms.length, filteredFilms);
+  }
+
+  // сортировка фильмов по рейтингу
+  getRatingSortMovies() {
+    const key = 'id'
+    const sortedFilms = this.movies.sort((movies1, movies2) => movies1[key] > movies2[key] ? 1 : -1);
+    console.log(sortedFilms)
   }
 
   // поиск фильма по актеру
