@@ -74,10 +74,10 @@ export default class MoviesScrapper {
     const filmsAnchors = Array.from(page.querySelectorAll('[data-tid="23a2a59"]'));
 
     if(filmsAnchors.length) {
-      const filmLinks = [...new Set(filmsAnchors.map(anchor => {
-        const anchorHref = anchor.href;
-        return anchorHref.slice(anchorHref.indexOf('film'));
-      }))];
+      const filmLinks = filmsAnchors.map(anchor => {
+          const anchorHref = anchor.href;
+          return anchorHref.slice(anchorHref.indexOf('film'));
+        })
       return filmLinks;
     }
   }
