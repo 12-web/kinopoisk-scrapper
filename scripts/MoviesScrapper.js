@@ -41,7 +41,7 @@ export default class MoviesScrapper {
     .childNodes[1]
     .textContent
     const poster = page.querySelector('.film-poster').src;
-    const box = page.querySelector('a[href*=box]');
+    const budget = page.querySelector('a[href*=box]');
     const rating = Number(page.querySelector('[data-tid="939058a8"]').textContent);
     const rank = parseInt(page.querySelector('.styles_position__pm10U').textContent);
     const time = parseInt(page.evaluate("//*[contains(text(), 'Время')]", page, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null)
@@ -61,7 +61,7 @@ export default class MoviesScrapper {
       country: country,
       genres: genres,
       director: director,
-      box: box ? box.textContent : 'не указан',
+      budget: budget ? budget.textContent : 'не указан',
       rating: rating,
       time: time,
       actors: actors,
