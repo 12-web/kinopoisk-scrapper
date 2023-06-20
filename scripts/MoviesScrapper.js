@@ -54,8 +54,6 @@ export default class MoviesScrapper {
     const actors = Array.from(page.querySelectorAll('[itemprop="actor"]')).map(actor => actor.textContent);
     const minAge = parseInt(page.querySelector('[data-tid="5c1ffa33"]').textContent);
 
-    console.log(titleRu);
-
     this.movies.push({
       id: rank,
       titleRu: titleRu,
