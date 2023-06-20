@@ -209,7 +209,7 @@ export default class MoviesScrapper {
   }
 
   getFilmbylength(id) {
-    console.log(this.movies[id]);
+    console.log(this._movies[id]);
 
   }
 
