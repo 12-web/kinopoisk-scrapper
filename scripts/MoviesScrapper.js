@@ -71,12 +71,12 @@ export default class MoviesScrapper {
 
   // формирование массива ссылок
   _collectFilmsLink(page) {
-    const filmsAnchors = Array.from(page.querySelectorAll('a[href*="/film/"]'));
+    const filmsAnchors = Array.from(page.querySelectorAll('[data-tid="23a2a59"]'));
 
     if(filmsAnchors.length) {
       const filmLinks = [...new Set(filmsAnchors.map(anchor => {
         const anchorHref = anchor.href;
-        return anchorHref.slice(anchorHref.indexOf('film'), anchorHref.indexOf('watch'));
+        return anchorHref.slice(anchorHref.indexOf('film'));
       }))];
       return filmLinks;
     }
@@ -130,7 +130,7 @@ export default class MoviesScrapper {
       pageNumber++;
       yield parsPage;
       }
-    }
+  }
 
   //поиск по названию фильма
   findMovie(name) {
@@ -206,6 +206,11 @@ export default class MoviesScrapper {
     });
 
     this._consoleResult(filteredFilms.length, filteredFilms);
+  }
+
+  getFilmbylength(id) {
+    console.log(this.movies[id]);
+
   }
 
   // запуск загрузки фильмов
