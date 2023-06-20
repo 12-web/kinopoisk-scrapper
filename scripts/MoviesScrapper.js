@@ -29,9 +29,12 @@ export default class MoviesScrapper {
   // формирование объекта с фильмом
   _createMovieElement(page) {
     const commonTitle = page.querySelector('[data-tid="75209b22"]').textContent;
-    const titleRu = page.querySelector('[data-tid="75209b22"]').textContent.replace(/^ +| +$|( ) +|\n|( )?\(\w{4}\)/g, '');
+    let titleRu = page.querySelector('[data-tid="75209b22"]').textContent.replace(/^ +| +$|( ) +|\n|( )?\(\w{4}\)/g, '');
+    titleRu = titleRu.replace(/\n/g, ' ');
+
     const titleEn = page.querySelector('.styles_originalTitle__JaNKM');
-    const description = page.querySelector('[data-tid="bbb11238"]').textContent.replace(/^ +| +$|( ) +|\n/g, '');
+    let description = page.querySelector('[data-tid="bbb11238"]').textContent.replace(/^ +| +$|( ) /g, '');
+    description = description.replace(/\n/g, ' ');
     const year = Number(commonTitle.match(/[0-9]{4}/));
     const country = page.querySelector('a[href*=country]').textContent;
     const genres = Array.from(page.querySelectorAll('a[href*=genre]')).map(genre => genre.textContent);
@@ -50,6 +53,8 @@ export default class MoviesScrapper {
     .textContent);
     const actors = Array.from(page.querySelectorAll('[itemprop="actor"]')).map(actor => actor.textContent);
     const minAge = parseInt(page.querySelector('[data-tid="5c1ffa33"]').textContent);
+
+    console.log(titleRu);
 
     this.movies.push({
       id: rank,
