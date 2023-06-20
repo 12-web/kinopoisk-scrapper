@@ -29,7 +29,7 @@ export default class MoviesScrapper {
   // формирование объекта с фильмом
   _createMovieElement(page) {
     const commonTitle = page.querySelector('[data-tid="75209b22"]').textContent;
-    const titleRu = page.querySelector('[data-tid="75209b22"]').textContent.replace(/ +|\(\d{4}\)+/g, ' ').trim();
+    const titleRu = page.querySelector('[data-tid="75209b22"]').textContent.replace(/\n/g, '').replace(/ +|\(\d{4}\)+/g, ' ').trim();
     const titleEn = page.querySelector('.styles_originalTitle__JaNKM');
     const description = page.querySelector('[data-tid="bbb11238"]').textContent.replace(/\n/g, '').replace(/ +/g, ' ').trim();
     const year = Number(commonTitle.match(/[\d]{4}/));
