@@ -208,11 +208,6 @@ export default class MoviesScrapper {
     this._consoleResult(filteredFilms.length, filteredFilms);
   }
 
-  getFilmbylength(id) {
-    console.log(this._movies[id]);
-
-  }
-
   // запуск загрузки фильмов
   loadMovies() { this._scanFilmsLinks(this._getFilmListPage()) }
 }
